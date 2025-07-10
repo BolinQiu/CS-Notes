@@ -16,6 +16,8 @@ class TransformerEmbedding(nn.Module):
         self.drop_out = nn.Dropout(p=drop_prob)
 
     def forward(self, x):
-        tok_emb = self.tok_emb(x)
-        pos_emb = self.pos_emb(x)
-        return self.drop_out(tok_emb + pos_emb)
+        # Shape of x: [batch_size, seq_len]
+
+        tok_emb = self.tok_emb(x) # Shape: [batch_size, seq_len, d_model]
+        pos_emb = self.pos_emb(x) # Shape: [batch_size, seq_len, d_model]
+        return self.drop_out(tok_emb + pos_emb) # Shape: [batch_size, seq_len, d_model]

@@ -18,6 +18,8 @@ class MultiHeadAttention(nn.Module):
         # Split tensor by number of heads
         q, k, v = self.split(q), self.split(k), self.split(v)
 
+        # Shape of q, k, v: [batch_size, head, length, d_tensor]
+        # Shape of mask: [batch_size, 1, 1, length]
         out, attention = self.attention(q, k, v, mask=mask)
         out = self.concat(out)
         out = self.w_concat(out)

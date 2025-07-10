@@ -14,12 +14,16 @@ class ScaleDotProductAttention(nn.Module):
         """
         batch_size, head, length, d_tensor = k.size()
         k_t = k.transpose(2, 3)
-        score = torch.mul(q, k_t) / math.sqrt(d_tensor)
-
+        # Shape of q: [batch_size, head, length, d_tensor]
+        # Shape of k_t: [batch_size, head, d_tensor, length]
+        score = torch.matmul(q, k_t) / math.sqrt(d_tensor)
+        # Shape of score: [batch_size, head, length, length]
         # Apply masking (opt)
         if mask is not None:
+            # Shape of mask: [batch_size, 1, 1, length]
             score = score.masked_fill(mask == 0, -10000)
+            # For masked_fill function, the shape of mask should be broadcastable to the shape of score
 
         score = self.softmax(score)
-        v = torch.mul(score, v)
+        v = torch.matmul(score, v)
         return v, score
